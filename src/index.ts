@@ -1,3 +1,1 @@
-export function helloWorld(): string {
-  return 'Hello, typeengine!';
-}
+export * from './document';
