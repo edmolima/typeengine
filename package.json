@@ -1,0 +1,59 @@
+{
+  "name": "typeengine",
+  "version": "0.0.0",
+  "description": "Typeengine is a blazing-fast, minimal, and extensible rich text core for building the editors of tomorrow.",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "dev": "vitest watch",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "format": "biome format .",
+    "lint": "biome lint .",
+    "changeset": "changeset",
+    "release": "changeset publish",
+    "prepublishOnly": "pnpm run build && pnpm test && pnpm lint"
+  },
+  "keywords": [
+    "rich-text",
+    "editor",
+    "immutable",
+    "typescript",
+    "core",
+    "minimal",
+    "plugin-system"
+  ],
+  "author": {
+    "name": "Edmo Lima",
+    "email": "soedmolima@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edmolima/typeengine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/edmolima/typeengine/issues"
+  },
+  "homepage": "https://github.com/edmolima/typeengine#readme",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.5",
+    "@vitest/coverage-v8": "3.2.4",
+    "biome": "^0.3.3",
+    "esbuild": "^0.25.6",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
