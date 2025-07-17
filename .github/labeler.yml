@@ -1,0 +1,53 @@
+'dependencies':
+  - changed-files:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+'ci':
+  - changed-files:
+      - '.github/workflows/**'
+      - '.github/labeler.yml'
+      - '.github/dependabot.yml'
+
+'docs':
+  - changed-files:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'SECURITY.md'
+
+'test':
+  - changed-files:
+      - 'tests/**'
+
+'feature':
+  - head-branch: ['^feature/', '^feat/']
+  - title: ['feat', 'feature']
+
+'bug':
+  - head-branch: ['^bug/', '^fix/']
+  - title: ['fix', 'bug']
+
+'refactor':
+  - head-branch: ['^refactor/']
+  - title: ['refactor']
+
+'chore':
+  - head-branch: ['^chore/']
+  - title: ['chore']
+
+'types':
+  - changed-files:
+      - 'src/**/*.d.ts'
+      - 'src/**/*.types.ts'
+
+'build':
+  - changed-files:
+      - 'esbuild.config.js'
+      - 'tsconfig.json'
+      - 'package.json'
+
+'release':
+  - head-branch: ['^changeset-release/']
+  - title: ['release', 'Version Packages']
