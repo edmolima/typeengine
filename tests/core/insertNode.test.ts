@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createRootNode, DocumentNode } from '../src/document';
-import { insertNode } from '../src/insertNode';
+import { createRootNode, DocumentNode } from '../../src/core/document';
+import { insertNode } from '../../src/core/insertNode';
 
 function createTextNode(id: string, text: string): DocumentNode {
   return { id, type: 'text', text };

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createRootNode, traverse, DocumentNode } from '../src/document';
+import {
+  createRootNode,
+  traverse,
+  DocumentNode,
+} from '../../src/core/document';
 
 function createTextNode(id: string, text: string): DocumentNode {
   return { id, type: 'text', text };
