@@ -1,3 +1,4 @@
+
 # typeengine
 
 > Blazing-fast, minimal, and extensible rich text core for building the editors of tomorrow.
@@ -10,25 +11,31 @@
 
 ---
 
-## 🚀 Overview
+## 📦 Installation
 
-typeengine is a high-performance, zero-dependency core for rich text editors. Built with a functional, immutable architecture, it empowers developers to create the next generation of collaborative, accessible, and framework-agnostic text experiences.
+```sh
+pnpm add typeengine
+# or
+yarn add typeengine
+# or
+```
 
 ---
 
-## ✨ Features
-- **Immutable tree-based document model**
-- **Functional, developer-first API**
-- **Atomic operations:** insert, remove, update, set_attr
-- **Zero dependencies**
-- **Fully decoupled from UI and DOM**
-- **Optional plugin system (no bloat)**
-- **Headless rendering:** React, Vue, mobile, server, CLI
-- **Native selection and customizable attributes**
-- **Easy serialization/deserialization:** JSON, Markdown, HTML
-- **Real-time collaboration ready:** CRDT/OT pluggable
-- **Accessibility and internationalization support**
-- **Top-tier DX:** clear typing, concise docs, practical examples
+## 🏁 Quick Start
+```ts
+import { createRootNode } from 'typeengine';
+const doc = createRootNode();
+```
+
+---
+
+## 📚 Documentation
+
+See [`docs/guide.md`](./docs/guide.md) for the full API, usage examples, and advanced guides.
+## 🚀 About
+
+**typeengine** is a high-performance, zero-dependency core for rich text editors. Built with a functional, immutable architecture, it empowers developers to create the next generation of collaborative, accessible, and framework-agnostic text experiences.
 
 ---
 
@@ -44,24 +51,46 @@ npm install typeengine
 
 ---
 
-## 🛠️ Quick Start
+## 🏁 Quick Start
 
 ```ts
-import { helloWorld } from "typeengine";
-
-console.log(helloWorld()); // "Hello, typeengine!"
+import { createRootNode } from 'typeengine';
+const doc = createRootNode();
 ```
 
 ---
 
-## 🗺️ Roadmap
+## 📚 Documentation
 
-See [`docs/roadmap.md`](./docs/roadmap.md) for the full project roadmap and progress.
-
-See [milestones](https://github.com/edmolima/typeengine/milestones) for detailed progress.
+- **API & Usage:** See [`docs/guide.md`](./docs/guide.md)
+- **Roadmap:** See [`docs/roadmap.md`](./docs/roadmap.md)
+- **Architecture & ADRs:** See [`docs/adrs/`](./docs/adrs/)
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, code of conduct, and how to get started.
+
+---
+
+## 🛡️ Security
+
+If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.md) and report it responsibly.
+
+---
+
+## 💬 Community & Support
+
+- [Discussions](https://github.com/edmolima/typeengine/discussions)
+- [Issues](https://github.com/edmolima/typeengine/issues)
+- [Releases](https://github.com/edmolima/typeengine/releases)
+
+---
+
+## 📄 License
+
+MIT © [Edmo Lima](https://github.com/edmolima)
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please open issues and pull requests. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
