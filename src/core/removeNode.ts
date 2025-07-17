@@ -1,4 +1,5 @@
-import { DocumentNode } from './document';
+import type { DocumentNode } from './document';
+import { mapTree, DocumentNodeNotFoundError } from './document';
 
 /**
  * Removes a node (by id) from the document tree, returning a new tree.
@@ -13,19 +14,16 @@ export function removeNode(tree: DocumentNode, nodeId: string): DocumentNode {
   if (tree.id === nodeId) {
     throw new Error('Cannot remove the root node');
   }
-  if (!tree.children) {
-    return tree;
-  }
-  // Remove direct children with the id
-  const filtered = tree.children.filter((child) => child.id !== nodeId);
-  // Recursively process children
-  const newChildren = filtered.map((child) => removeNode(child, nodeId));
-  if (
-    filtered.length === tree.children.length &&
-    tree.children.every((c, i) => c === filtered[i]) &&
-    tree.children.every((c, i) => c === newChildren[i])
-  ) {
-    throw new Error('Node not found');
-  }
-  return { ...tree, children: newChildren };
+  let removed = false;
+  const result = mapTree(tree, (node) => {
+    if (!node.children) return node;
+    const filtered = node.children.filter((child) => child.id !== nodeId);
+    if (filtered.length !== node.children.length) {
+      removed = true;
+      return { ...node, children: filtered };
+    }
+    return node;
+  });
+  if (!removed) throw new DocumentNodeNotFoundError(nodeId);
+  return result;
 }

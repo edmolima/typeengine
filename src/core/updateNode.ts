@@ -1,4 +1,5 @@
-import { DocumentNode } from './document';
+import type { DocumentNode } from './document';
+import { mapTree, DocumentNodeNotFoundError } from './document';
 
 /**
  * Updates a node's attributes or text content by id, returning a new document tree.
@@ -15,21 +16,14 @@ export function updateNode(
   nodeId: string,
   update: Partial<Pick<DocumentNode, 'attrs' | 'text'>>
 ): DocumentNode {
-  if (tree.id === nodeId) {
-    return { ...tree, ...update };
-  }
-  if (!tree.children) {
-    throw new Error('Node not found');
-  }
-  const newChildren = tree.children.map((child) => {
-    try {
-      return updateNode(child, nodeId, update);
-    } catch {
-      return child;
+  let updated = false;
+  const result = mapTree(tree, (node) => {
+    if (node.id === nodeId) {
+      updated = true;
+      return { ...node, ...update };
     }
+    return node;
   });
-  if (tree.children.every((c, i) => c === newChildren[i])) {
-    throw new Error('Node not found');
-  }
-  return { ...tree, children: newChildren };
+  if (!updated) throw new DocumentNodeNotFoundError(nodeId);
+  return result;
 }

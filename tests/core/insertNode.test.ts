@@ -42,21 +42,19 @@ describe('insertNode', () => {
     const t1 = createTextNode('t1', 'A');
     const root = createRootNode([]);
 
-    expect(() => insertNode(root, 'notfound', t1, 0)).toThrow(
-      'Parent node not found'
-    );
+    expect(() => insertNode(root, 'notfound', t1, 0)).toThrow('Node not found');
 
     const para = { id: 'p1', type: 'paragraph' as const, children: [t1] };
     const root2 = createRootNode([para]);
     expect(() => insertNode(root2, 'notfound', t1, 0)).toThrow(
-      'Parent node not found'
+      'Node not found'
     );
 
     try {
       insertNode(root, 'notfound', t1, 0);
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toBe('Parent node not found');
+      expect((e as Error).message).toBe('Node not found');
     }
   });
 
@@ -65,9 +63,7 @@ describe('insertNode', () => {
     const t2 = createTextNode('t2', 'B');
     const para = { id: 'p1', type: 'paragraph' as const, children: [t1, t2] };
     const root = createRootNode([para]);
-    expect(() => insertNode(root, 'notfound', t1, 0)).toThrow(
-      'Parent node not found'
-    );
+    expect(() => insertNode(root, 'notfound', t1, 0)).toThrow('Node not found');
   });
 
   it('throws for out-of-bounds index', () => {

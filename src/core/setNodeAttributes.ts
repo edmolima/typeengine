@@ -1,4 +1,5 @@
-import { DocumentNode, NodeAttributes } from './document';
+import type { DocumentNode, NodeAttributes } from './document';
+import { mapTree, DocumentNodeNotFoundError } from './document';
 
 /**
  * Sets or updates attributes on a node by id, returning a new document tree.
@@ -15,21 +16,27 @@ export function setNodeAttributes(
   nodeId: string,
   attrs: NodeAttributes
 ): DocumentNode {
-  if (tree.id === nodeId) {
-    return { ...tree, attrs: { ...(tree.attrs ?? {}), ...attrs } };
-  }
-  if (!tree.children) {
-    throw new Error('Node not found');
-  }
-  const newChildren = tree.children.map((child) => {
-    try {
-      return setNodeAttributes(child, nodeId, attrs);
-    } catch {
-      return child;
+  let updated = false;
+
+  const result = mapTree(tree, (node) => {
+    if (node.id === nodeId) {
+      updated = true;
+
+      return {
+        ...node,
+        attrs: {
+          ...(node.attrs ?? {}),
+          ...attrs,
+        },
+      };
     }
+
+    return node;
   });
-  if (tree.children.every((c, i) => c === newChildren[i])) {
-    throw new Error('Node not found');
+
+  if (!updated) {
+    throw new DocumentNodeNotFoundError(nodeId);
   }
-  return { ...tree, children: newChildren };
+
+  return result;
 }

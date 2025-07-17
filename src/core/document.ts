@@ -1,4 +1,32 @@
 /**
+ * Error thrown when a document node is not found.
+ */
+export class DocumentNodeNotFoundError extends Error {
+  constructor(_id: string) {
+    super('Node not found');
+    this.name = 'DocumentNodeNotFoundError';
+  }
+}
+
+/**
+ * Generic recursive map helper for document trees.
+ * Applies fn to each node, returning a new tree.
+ * @param node - The root node
+ * @param fn - Function to apply to each node
+ * @returns The new tree
+ */
+export function mapTree(
+  node: DocumentNode,
+  fn: (node: DocumentNode) => DocumentNode
+): DocumentNode {
+  const mapped = fn(node);
+  if (!mapped.children) return mapped;
+  return {
+    ...mapped,
+    children: mapped.children.map((child) => mapTree(child, fn)),
+  };
+}
+/**
  * NodeType represents the type of a node in the document tree.
  */
 export type NodeType = 'root' | 'paragraph' | 'text';
@@ -23,6 +51,12 @@ export type DocumentNode = {
   readonly attrs?: NodeAttributes;
   readonly text?: string;
 };
+
+/**
+ * Document is an alias for DocumentNode.
+ * It represents the structure of the entire document.
+ */
+export type Document = DocumentNode;
 
 /**
  * Creates a new document root node.
