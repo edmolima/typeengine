@@ -35,7 +35,6 @@ describe('insertNode', () => {
 
   it('inserts deeply in a nested tree', () => {
     const t1 = createTextNode('t1', 'A');
-    const t2 = createTextNode('t2', 'B');
     const para = { id: 'p1', type: 'paragraph' as const, children: [t1] };
     const root = createRootNode([para]);
     const t3 = createTextNode('t3', 'C');
@@ -64,7 +63,6 @@ describe('insertNode', () => {
 
   it('does not mutate any part of the original tree', () => {
     const t1 = createTextNode('t1', 'A');
-    const t2 = createTextNode('t2', 'B');
     const para = { id: 'p1', type: 'paragraph' as const, children: [t1] };
     const root = createRootNode([para]);
     const t3 = createTextNode('t3', 'C');
