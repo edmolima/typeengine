@@ -52,8 +52,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check minimum coverage
         run: |
-          COVERAGE=$(grep -Po 'All files[^|]*\|\s*\K[\d.]+' coverage/coverage-summary.txt | head -1)
-          echo "Total coverage: $COVERAGE%"
+          COVERAGE=$(grep -Po '^Statements\s*:\s*\K[\d.]+' coverage/report.txt | head -1)
+          echo "Total statements coverage: $COVERAGE%"
           awk -v c=$COVERAGE 'BEGIN {exit c<80}'
 
   build:
