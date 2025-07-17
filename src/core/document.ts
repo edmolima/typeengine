@@ -26,23 +26,61 @@ export function mapTree(
     children: mapped.children.map((child) => mapTree(child, fn)),
   };
 }
+
 /**
- * NodeType represents the type of a node in the document tree.
+ * NodeType defines all possible node types in the document tree.
+ * This includes all block and inline elements relevant to Markdown/CommonMark,
+ * as well as extensibility for rich text editors and future formats.
  */
-export type NodeType = 'root' | 'paragraph' | 'text';
+export type NodeType =
+  // Block-level elements
+  | 'root' // Document root
+  | 'paragraph' // Paragraph block
+  | 'heading' // Heading block (attrs.level: 1-6)
+  | 'list' // List block (attrs.ordered: boolean)
+  | 'listItem' // List item
+  | 'code' // Code block (attrs.lang: string)
+  | 'blockquote' // Blockquote
+  | 'thematicBreak' // Horizontal rule (---)
+  | 'table' // Table block
+  | 'tableRow' // Table row
+  | 'tableCell' // Table cell (attrs.header: boolean, attrs.align)
+
+  // Inline elements
+  | 'text' // Plain text
+  | 'emphasis' // *emphasis* (italic)
+  | 'strong' // **strong** (bold)
+  | 'inlineCode' // `inline code`
+  | 'link' // [text](href)
+  | 'image'; // ![alt](src)
 
 /**
  * NodeAttributes represents a map of custom attributes for a document node.
+ *
+ * Common attributes by node type:
+ * - heading: { level: number }
+ * - list: { ordered: boolean }
+ * - code: { lang?: string }
+ * - link: { href: string, title?: string }
+ * - image: { src: string, alt?: string, title?: string }
+ * - tableCell: { header?: boolean, align?: 'left' | 'center' | 'right' }
  */
 export type NodeAttributes = Readonly<Record<string, unknown>>;
 
 /**
  * DocumentNode represents a node in the immutable document tree.
- * - `id`: Unique identifier for the node.
- * - `type`: The type of the node (e.g., root, paragraph, text).
- * - `children`: Optional, child nodes (for non-leaf nodes).
- * - `attrs`: Optional, custom attributes for the node.
- * - `text`: Optional, text content (for text nodes).
+ *
+ * - id: Unique identifier for the node (string, required)
+ * - type: NodeType (required)
+ * - children: Child nodes (for non-leaf nodes, optional)
+ * - attrs: Custom attributes for the node (optional, see NodeAttributes)
+ * - text: Text content (for text/inline nodes, optional)
+ *
+ * This structure enables:
+ * - Rich, extensible document modeling
+ * - Lossless round-trip serialization for HTML, Markdown, JSON, and custom formats
+ * - Plugin-based transformation, normalization, and validation
+ * - Full support for block and inline semantics, including tables, code, links, images, and more
  */
 export type DocumentNode = {
   readonly id: string;
