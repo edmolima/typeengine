@@ -88,9 +88,6 @@ If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.
 
 ---
 
-## 📄 License
-
-MIT © [Edmo Lima](https://github.com/edmolima)
 ## 🤝 Contributing
 
 We welcome contributions from the community! Please open issues and pull requests. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
