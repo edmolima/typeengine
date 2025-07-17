@@ -9,22 +9,25 @@
 
 ---
 
-Blazing-fast, minimal, and extensible rich text core for building the editors of tomorrow.
+
+Typeengine is a blazing-fast, minimal, and extensible rich text core designed for building the editors of tomorrow. It provides a robust foundation for document modeling, transformation, and serialization, enabling developers to create advanced editing experiences with confidence.
+
 
 ## Features
 
-- Immutable, functional document model
-- Strict TypeScript types
-- Extensible operations (insert, remove, update, setNodeAttributes)
-- Zero dependencies in core
-- 100% TDD and coverage enforced in CI
-- Professional documentation, ADRs, and contribution policies
+- Powerful, extensible document model for rich text editing
+- Core operations: insert, remove, update, and set node attributes
+- Built-in serialization and deserialization for HTML, JSON, and Markdown
+- Plugin system for custom behaviors and integrations
+- Designed for performance, reliability, and maintainability
+
 
 ## Getting Started
 
 ```sh
 pnpm install typeengine
 ```
+
 
 ## Usage
 
@@ -33,12 +36,14 @@ import { createDocument, insertNode, removeNode, updateNode, setNodeAttributes }
 // ...
 ```
 
+
 ## Release & Automation
 
 - Releases are 100% automated via GitHub Actions and [Changesets](https://github.com/changesets/changesets).
 - Releases only occur after CI passes and merge to the `main` branch.
 - Publishes only if there is a pending changeset (see docs/release.md).
 - Branch protection ensures nothing is published without review and green CI.
+
 
 ## Contributing & Community
 
@@ -47,9 +52,11 @@ import { createDocument, insertNode, removeNode, updateNode, setNodeAttributes }
 - We follow a [Code of Conduct](CODE_OF_CONDUCT.md) and encourage a friendly, inclusive community.
 - Want to support? See [FUNDING.yml](.github/FUNDING.yml).
 
+
 ## Roadmap
 
 See [docs/roadmap.md](docs/roadmap.md).
+
 
 ## License
 
