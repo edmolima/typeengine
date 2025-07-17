@@ -20,9 +20,11 @@
     "typecheck": "tsc --noEmit",
     "format": "biome format .",
     "lint": "biome lint .",
+    "lint:fix": "biome check --write .",
     "changeset": "changeset",
     "release": "changeset publish",
-    "prepublishOnly": "pnpm run build && pnpm test && pnpm lint"
+    "prepublishOnly": "pnpm run build && pnpm test && pnpm lint",
+    "version": "changeset version && pnpm install --no-frozen-lockfile && pnpm lint:fix"
   },
   "keywords": [
     "rich-text",
