@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: pnpm setup
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: pnpm Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install packages
+        run: pnpm install --frozen-lockfile
+      - name: Exit prerelease mode
+        continue-on-error: true
+        run: pnpm canary:exit
+      - name: Check for pending changesets
+        id: changesets-check
+        run: |
+          if [ -z "$(pnpm changeset status | grep 'patch\|minor\|major')" ]; then
+            echo "No pending changesets. Skipping release."
+            exit 78
+          fi
+      - name: Create "Version packages" PR or publish release
+        if: steps.changesets-check.outcome == 'success'
+        uses: changesets/action@v1
+        with:
+          version: pnpm run version
+          publish: pnpm run release
+          title: 'chore(root): Version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

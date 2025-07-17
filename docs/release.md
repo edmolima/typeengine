@@ -1,36 +1,30 @@
-# Release Process
+# Release & Automation Flow
 
-This project uses a fully automated, professional release workflow based on Continuous Delivery principles.
+Este projeto segue práticas modernas de automação e release open source. Releases são gerenciados via [Changesets](https://github.com/changesets/changesets) e workflows do GitHub Actions.
 
-## How Releases Work
+## Fluxo de Release Seguro
 
-- Every push and pull request to `main` triggers the CI pipeline (see `.github/workflows/ci.yml`).
-- The pipeline runs lint, typecheck, tests (with coverage), build, and only proceeds if all checks pass.
-- Releases are managed by [Changesets](https://github.com/changesets/changesets):
-  - To propose a release, create a changeset with `pnpm changeset` and commit it.
-  - When changes are merged to `main`, the CI will create or update a release PR if there are unreleased changesets.
-  - When the release PR is merged, the CI will:
-    1. Bump the version and update changelogs.
-    2. Publish the package to npm (if NPM_TOKEN is set).
-    3. Tag the release on GitHub.
+1. **Todo PR deve passar pelo CI (lint, typecheck, test, coverage ≥80%)**
+   - Enforced pelo workflow `ci.yml`.
+2. **Feature/fix PRs devem incluir um Changeset**
+   - Use `pnpm changeset` para descrever mudanças e versionamento.
+3. **Proteção de branch**
+   - Só é possível dar merge na `main` se o CI passar.
+4. **Release automatizado**
+   - O workflow `release.yml` só roda em push para `main`.
+   - Só publica se houver changeset pendente (checagem automática).
+   - Se não houver changeset, o job termina sem erro e sem publicar.
+5. **Publicação auditável**
+   - O release é feito via [changesets/action](https://github.com/changesets/action) usando tokens seguros.
+   - Todo release é auditável e só ocorre após revisão e CI verde.
 
-## How to Cut a Release (Manual Steps)
+## Badge de cobertura
+Adicione ao topo do seu `README.md`:
 
-1. Make sure your branch is up to date with `main` and all tests pass.
-2. Run `pnpm changeset` and follow the prompts to describe your changes (major, minor, patch).
-3. Commit the generated changeset file.
-4. Open a pull request to `main`.
-5. Once merged, the CI will handle versioning, changelog, and publishing automatically.
-
-## Requirements
-
-- You must have `NPM_TOKEN` and `GITHUB_TOKEN` set in the repository secrets for publishing.
-- Only the CI can publish to npm—manual publishing is discouraged.
-
-## References
-- [Changesets documentation](https://github.com/changesets/changesets)
-- [CI workflow](../.github/workflows/ci.yml)
+```
+[![codecov](https://codecov.io/gh/edmolima/typeengine/branch/main/graph/badge.svg)](https://codecov.io/gh/edmolima/typeengine)
+```
 
 ---
 
-For any issues or questions, open an [issue](https://github.com/edmolima/typeengine/issues) or ask in [Discussions](https://github.com/edmolima/typeengine/discussions).
+Para mais detalhes, veja [CONTRIBUTING.md](../CONTRIBUTING.md) e [docs/roadmap.md](../docs/roadmap.md).
