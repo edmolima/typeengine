@@ -52,8 +52,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check minimum coverage
         run: |
-          COVERAGE=$(grep -Po '^Statements\s*:\s*\K[\d.]+' coverage/report.txt | head -1)
-          echo "Total statements coverage: $COVERAGE%"
+          COVERAGE=$(awk -F',' '/^DA:/ { if ($2>0) covered++; total++ } END { if (total>0) print (covered/total)*100; else print 0 }' coverage/lcov.info)
+          echo "Statements coverage: $COVERAGE%"
           awk -v c=$COVERAGE 'BEGIN {exit c<80}'
 
   build:
