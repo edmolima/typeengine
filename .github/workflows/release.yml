@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - name: Install packages
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
       - name: Exit prerelease mode
         continue-on-error: true
         run: pnpm canary:exit
