@@ -18,6 +18,11 @@ This project follows modern open source automation and release practices. Releas
    - Release is performed via [changesets/action](https://github.com/changesets/action) using secure tokens.
    - Every release is auditable and only happens after review and green CI.
 
+## Open Source PR Flow Note
+- When a release is needed, the workflow will create a `changeset-release/main` branch.
+- You must open the release PR manually using the link provided in the workflow logs (e.g., https://github.com/edmolima/typeengine/pull/new/changeset-release/main).
+- After review and merge, the release will be published automatically.
+
 ## Coverage badge
 Add this to the top of your `README.md`:
 

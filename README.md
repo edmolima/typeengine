@@ -18,13 +18,13 @@
 ## Getting Started
 
 ```sh
-pnpm install typebase
+pnpm install typeengine
 ```
 
 ## Usage
 
 ```ts
-import { createDocument, insertNode, removeNode, updateNode, setNodeAttributes } from 'typebase';
+import { createDocument, insertNode, removeNode, updateNode, setNodeAttributes } from 'typeengine';
 // ...
 ```
 
