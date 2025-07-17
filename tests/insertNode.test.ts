@@ -12,7 +12,6 @@ describe('insertNode', () => {
     const root = createRootNode([]);
     const updated = insertNode(root, 'root', t1, 0);
     expect(updated.children).toEqual([t1]);
-    // original root is not mutated
     expect(root.children).toEqual([]);
   });
 
@@ -22,13 +21,10 @@ describe('insertNode', () => {
     const para = { id: 'p1', type: 'paragraph' as const, children: [t1, t2] };
     const root = createRootNode([para]);
     const t3 = createTextNode('t3', 'C');
-    // insert in the middle
     const updated = insertNode(root, 'p1', t3, 1);
     expect(updated.children?.[0].children).toEqual([t1, t3, t2]);
-    // insert at the end
     const updated2 = insertNode(root, 'p1', t3, 2);
     expect(updated2.children?.[0].children).toEqual([t1, t2, t3]);
-    // insert at the start
     const updated3 = insertNode(root, 'p1', t3, 0);
     expect(updated3.children?.[0].children).toEqual([t3, t1, t2]);
   });
@@ -42,9 +38,33 @@ describe('insertNode', () => {
     expect(updated.children?.[0].children?.[0].children).toEqual([t3]);
   });
 
-  it('throws for invalid parent id', () => {
+  it('throws for invalid parent id (direct and nested)', () => {
     const t1 = createTextNode('t1', 'A');
     const root = createRootNode([]);
+
+    expect(() => insertNode(root, 'notfound', t1, 0)).toThrow(
+      'Parent node not found'
+    );
+
+    const para = { id: 'p1', type: 'paragraph' as const, children: [t1] };
+    const root2 = createRootNode([para]);
+    expect(() => insertNode(root2, 'notfound', t1, 0)).toThrow(
+      'Parent node not found'
+    );
+
+    try {
+      insertNode(root, 'notfound', t1, 0);
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect((e as Error).message).toBe('Parent node not found');
+    }
+  });
+
+  it('returns child unchanged if inserting into a leaf node (coverage for return child)', () => {
+    const t1 = createTextNode('t1', 'A');
+    const t2 = createTextNode('t2', 'B');
+    const para = { id: 'p1', type: 'paragraph' as const, children: [t1, t2] };
+    const root = createRootNode([para]);
     expect(() => insertNode(root, 'notfound', t1, 0)).toThrow(
       'Parent node not found'
     );
