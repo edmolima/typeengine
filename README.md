@@ -24,8 +24,9 @@ yarn add typeengine
 
 ## 🏁 Quick Start
 ```ts
-import { createRootNode } from 'typeengine';
+import { createRootNode, insertNode, removeNode, updateNode, setNodeAttributes, traverse } from 'typeengine';
 const doc = createRootNode();
+// ... use all core operations via the main entrypoint
 ```
 
 ---
