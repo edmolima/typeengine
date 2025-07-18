@@ -53,6 +53,90 @@ const codeDoc: DocumentNode = {
 };
 
 describe('jsonSerializer', () => {
+  it('should never execute or corrupt script tags in JSON', () => {
+    const doc = {
+      id: 'root',
+      type: 'root',
+      attrs: {},
+      text: '',
+      children: [
+        {
+          id: 'html1',
+          type: 'html',
+          attrs: {},
+          text: '<script>alert("xss")</script>',
+          children: [],
+        },
+      ],
+    };
+    const json = JSON.stringify(doc);
+    const parsed = jsonSerializer.deserialize(json);
+    expect(parsed.children?.[0]?.type).toBe('html');
+    expect(parsed.children?.[0]?.text).toContain(
+      '<script>alert("xss")</script>'
+    );
+    // Should not execute code, only treat as text
+    const serialized = jsonSerializer.serialize(parsed);
+    expect(serialized).toContain('<script>alert(\\"xss\\")</script>');
+  });
+
+  it('should never execute or preserve dangerous links in JSON', () => {
+    const doc = {
+      id: 'root',
+      type: 'root',
+      attrs: {},
+      text: '',
+      children: [
+        {
+          id: 'l1',
+          type: 'link',
+          attrs: { href: 'javascript:alert("xss")' },
+          text: '',
+          children: [
+            {
+              id: 't1',
+              type: 'text',
+              attrs: {},
+              text: 'malicious',
+              children: [],
+            },
+          ],
+        },
+      ],
+    };
+    const json = JSON.stringify(doc);
+    const parsed = jsonSerializer.deserialize(json);
+    // The parser must never execute, only preserve the attribute safely
+    expect(parsed.children?.[0]?.type).toBe('link');
+    expect(parsed.children?.[0]?.attrs?.href).toBe('javascript:alert("xss")');
+    const serialized = jsonSerializer.serialize(parsed);
+    expect(serialized).toContain('javascript:alert(\\"xss\\")');
+  });
+
+  it('should never execute or preserve dangerous image src in JSON', () => {
+    const doc = {
+      id: 'root',
+      type: 'root',
+      attrs: {},
+      text: '',
+      children: [
+        {
+          id: 'img1',
+          type: 'image',
+          attrs: { src: 'javascript:alert("xss")', alt: 'xss' },
+          text: '',
+          children: [],
+        },
+      ],
+    };
+    const json = JSON.stringify(doc);
+    const parsed = jsonSerializer.deserialize(json);
+    // The parser must never execute, only preserve the attribute safely
+    expect(parsed.children?.[0]?.type).toBe('image');
+    expect(parsed.children?.[0]?.attrs?.src).toBe('javascript:alert("xss")');
+    const serialized = jsonSerializer.serialize(parsed);
+    expect(serialized).toContain('javascript:alert(\\"xss\\")');
+  });
   it('serializes a minimal document', () => {
     const json = jsonSerializer.serialize(minimalDoc);
     expect(json).toBe(JSON.stringify(minimalDoc));

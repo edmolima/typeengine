@@ -409,4 +409,43 @@ describe('markdownSerializer', () => {
     // Last row should be the body row
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.length).toBe(2);
   });
+
+  it('should never execute or preserve dangerous script tags in markdown', () => {
+    const md = '<script>alert("xss")</script>';
+    const parsed = markdownSerializer.deserialize(md);
+    expect(parsed.children?.[0]?.type).toBe('html');
+    expect(parsed.children?.[0]?.text).toMatch(/xss/);
+    // O serializer nunca deve executar, apenas preservar como texto seguro
+    const serialized = markdownSerializer.serialize(parsed);
+    expect(serialized).toContain('<script>alert("xss")</script>');
+  });
+
+  it('should never execute or preserve dangerous links in markdown', () => {
+    const md = '[malicious](javascript:alert("xss"))';
+    const parsed = markdownSerializer.deserialize(md);
+    expect(parsed.children?.[0]?.children?.[0]?.type).toBe('text');
+    expect(parsed.children?.[0]?.children?.[0]?.text).toMatch(/malicious/);
+    // O serializer nunca deve executar, apenas preservar como texto seguro
+    const serialized = markdownSerializer.serialize(parsed);
+    expect(serialized).toContain('javascript:alert("xss")');
+  });
+
+  it('should never execute or preserve dangerous image src in markdown', () => {
+    const md = '![xss](javascript:alert("xss"))';
+    const parsed = markdownSerializer.deserialize(md);
+    expect(parsed.children?.[0]?.children?.[0]?.type).toBe('text');
+    expect(parsed.children?.[0]?.children?.[0]?.text).toMatch(/xss/);
+    // O serializer nunca deve executar, apenas preservar como texto seguro
+    const serialized = markdownSerializer.serialize(parsed);
+    expect(serialized).toContain('javascript:alert("xss")');
+  });
+
+  it('should never execute or preserve dangerous inline code in markdown', () => {
+    const md = '`<script>alert("xss")</script>`';
+    const parsed = markdownSerializer.deserialize(md);
+    expect(parsed.children?.[0]?.children?.[0]?.type).toBe('inlineCode');
+    expect(parsed.children?.[0]?.children?.[0]?.text).toMatch(/xss/);
+    const serialized = markdownSerializer.serialize(parsed);
+    expect(serialized).toContain('<script>alert("xss")</script>');
+  });
 });

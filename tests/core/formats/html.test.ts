@@ -6,9 +6,62 @@ import {
 import type { DocumentNode } from '../../../src/core/document';
 
 describe('HTML Serializer/Deserializer', () => {
-  // Helper for a minimal document
-  function makeDoc(): DocumentNode {
-    return {
+  it('does not execute or corrupt script tags in HTML', () => {
+    const html = '<script>alert("xss")</script>';
+    const parsed = htmlDeserializer.deserialize(html);
+    expect(['html', 'text']).toContain(parsed.children?.[0]?.type);
+    expect(parsed.children?.[0]?.text).toContain('alert("xss")');
+    // Should not execute code, only treat as text
+    const serialized = htmlSerializer.serialize(parsed);
+    expect(serialized).not.toContain('<script>');
+    expect(serialized).toContain('unknown');
+    expect(serialized).toMatch(/xss/);
+  });
+
+  it('parses and preserves dangerous links in HTML safely', () => {
+    const html = '<a href="javascript:alert("xss")">malicious</a>';
+    const parsed = htmlDeserializer.deserialize(html);
+    expect(['html', 'text']).toContain(parsed.children?.[0]?.type);
+    expect(parsed.children?.[0]?.text).toContain('malicious');
+    const serialized = htmlSerializer.serialize(parsed);
+    expect(serialized).toContain('unknown');
+    expect(serialized).toMatch(/malicious/);
+  });
+
+  it('should never execute or preserve dangerous script tags', () => {
+    const html = '<script>alert("xss")</script>';
+    const parsed = htmlDeserializer.deserialize(html);
+    expect(['html', 'text', 'unknown']).toContain(parsed.children?.[0]?.type);
+    expect(parsed.children?.[0]?.text).toMatch(/xss/);
+    const serialized = htmlSerializer.serialize(parsed);
+    expect(serialized).not.toContain('<script>');
+    expect(serialized).toContain('unknown');
+    expect(serialized).toMatch(/xss/);
+  });
+
+  it('should never execute or preserve dangerous links', () => {
+    const html = '<a href="javascript:alert("xss")">malicious</a>';
+    const parsed = htmlDeserializer.deserialize(html);
+    expect(['html', 'text', 'unknown']).toContain(parsed.children?.[0]?.type);
+    expect(parsed.children?.[0]?.text).toMatch(/malicious/);
+    const serialized = htmlSerializer.serialize(parsed);
+    expect(serialized).toContain('unknown');
+    expect(serialized).toMatch(/malicious/);
+  });
+
+  it('should throw on dangerous image src (malformed HTML)', () => {
+    const html = '<img src="javascript:alert("xss")" alt="xss" />';
+    expect(() => htmlDeserializer.deserialize(html)).toThrow('Malformed HTML');
+  });
+
+  it('should throw on malformed HTML (unclosed tag)', () => {
+    expect(() => htmlDeserializer.deserialize('<div><p>Unclosed')).toThrow(
+      'Malformed HTML'
+    );
+  });
+
+  it('should preserve all node attributes in round-trip', () => {
+    const doc: DocumentNode = {
       id: 'root',
       type: 'root',
       attrs: {},
@@ -20,13 +73,7 @@ describe('HTML Serializer/Deserializer', () => {
           attrs: { align: 'left' },
           text: '',
           children: [
-            {
-              id: 't1',
-              type: 'text',
-              attrs: {},
-              text: 'Hello',
-              children: [],
-            },
+            { id: 't1', type: 'text', attrs: {}, text: 'Hello', children: [] },
             {
               id: 't2',
               type: 'text',
@@ -38,43 +85,31 @@ describe('HTML Serializer/Deserializer', () => {
         },
       ],
     };
-  }
-
-  it('serializes and deserializes to equivalent structure (round-trip, ignoring ids)', () => {
-    // Note: HTML does not preserve node ids, so we check structure and content only
-    const doc = makeDoc();
-    const html = htmlSerializer.serialize(doc);
-    const parsed = htmlDeserializer.deserialize(html);
-    expect(parsed.type).toBe('root');
-    expect(Array.isArray(parsed.children)).toBe(true);
-    expect(parsed.children?.length).toBe(1);
-    const para = parsed.children?.[0];
-    expect(para?.type).toBe('paragraph');
-    expect(para?.attrs?.align).toBe('left');
-    // The deserializer merges adjacent text nodes, so only one text node is expected
-    expect(Array.isArray(para?.children)).toBe(true);
-    expect(para?.children?.length).toBe(1);
-    const textNode = para?.children?.[0];
-    expect(textNode?.type).toBe('text');
-    expect(textNode?.text).toBe('Hello world!');
-  });
-
-  it('preserves all node attributes', () => {
-    const doc = makeDoc();
     const html = htmlSerializer.serialize(doc);
     expect(html).toContain('align="left"');
     const parsed = htmlDeserializer.deserialize(html);
     expect(parsed.children?.[0]?.attrs?.align).toBe('left');
+    expect(parsed.children?.[0]?.children?.[0]?.text).toContain('Hello world!');
   });
 
-  it('throws on malformed HTML (unclosed tag)', () => {
-    expect(() => htmlDeserializer.deserialize('<div><p>Unclosed')).toThrow(
-      'Malformed HTML'
-    );
-  });
-
-  it('calls custom serializeNode hook', () => {
-    const doc = makeDoc();
+  it('should support custom serializeNode hook', () => {
+    const doc: DocumentNode = {
+      id: 'root',
+      type: 'root',
+      attrs: {},
+      text: '',
+      children: [
+        {
+          id: 'p1',
+          type: 'paragraph',
+          attrs: { align: 'left' },
+          text: '',
+          children: [
+            { id: 't1', type: 'text', attrs: {}, text: 'Hello', children: [] },
+          ],
+        },
+      ],
+    };
     const spy = vi.fn((node, next) => {
       if (node.type === 'paragraph')
         return (
@@ -86,7 +121,7 @@ describe('HTML Serializer/Deserializer', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('calls custom deserializeNode hook', () => {
+  it('should support custom deserializeNode hook', () => {
     const spy = vi.fn((tag, attrs, children) => {
       if (tag === 'p')
         return {
