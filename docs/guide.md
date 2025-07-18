@@ -26,23 +26,9 @@ Blazing-fast, minimal, and extensible rich text core for building the editors of
 
 ### Document Model
 
-The document is an immutable tree of nodes. Each node has:
 
 - `id`: unique string
-- `type`: 'root', 'paragraph', or 'text'
-- `children`: array of child nodes (for non-leaf nodes)
-- `attrs`: custom attributes (optional)
-- `text`: text content (for text nodes)
-
-#### Node Types
-
-```ts
-type NodeType = 'root' | 'paragraph' | 'text';
-
-type NodeAttributes = Readonly<Record<string, unknown>>;
-
 type DocumentNode = {
-  readonly id: string;
   readonly type: NodeType;
   readonly children?: readonly DocumentNode[];
   readonly attrs?: NodeAttributes;
@@ -50,11 +36,6 @@ type DocumentNode = {
 };
 ```
 
-### Core Operations
-
-All operations are pure and immutable: they never mutate the original document.
-
-#### Create a root node
 ```ts
 import { createRootNode } from 'typeengine';
 const doc = createRootNode();

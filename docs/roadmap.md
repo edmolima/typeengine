@@ -1,32 +1,32 @@
 
-# 🗺️ typeengine Roadmap
 
-This document tracks the planned features and milestones for the typeengine project.
+# ROADMAP
+
+THIS DOCUMENT TRACKS THE PLANNED FEATURES AND MILESTONES FOR THE TYPEENGINE PROJECT.
 
 ---
 
-## Core Library (typeengine-core)
+## CORE LIBRARY (TYPEENGINE-CORE)
 
-**Goal:** Deliver the world’s fastest, most extensible, and developer-friendly immutable document engine for rich text—setting a new standard for reliability, flexibility, and integration.
+**Goal:** Deliver the world's fastest, most extensible, and developer-friendly immutable document engine for rich text—setting a new standard for reliability, flexibility, and integration.
 
+### V1 MILESTONES
 
-### v1 Milestones
+- [X] Immutable, extensible document model (structural sharing, zero-copy updates)
+- [X] Pure functional API with ergonomic TypeScript types (type inference everywhere)
+- [X] Unified, tree-shakable entrypoint and modular architecture
+- [X] Professional documentation, guides, and live playground
+- [X] Community, contribution, and security policies
+- [X] Automated CI, release, code quality, and coverage enforcement
+- [X] Lossless serialization/deserialization (JSON, Markdown, HTML, custom formats)
+- [X] Universal plugin system for document transforms and schema extensions
+- [X] Deterministic, reproducible document transforms (for testing, replay, audit)
+- [X] Pluggable schema validation and migration (versioned docs, forward/backward compat)
+- [X] Built-in benchmarking, tracing, and performance analytics
+- [X] Fuzz testing, mutation testing, and property-based tests
+- [X] Public API stability guarantees and upgrade tooling
 
-- [x] Immutable, extensible document model (structural sharing, zero-copy updates)
-- [x] Pure functional API with ergonomic TypeScript types (type inference everywhere)
-- [x] Unified, tree-shakable entrypoint and modular architecture
-- [x] Professional documentation, guides, and live playground
-- [x] Community, contribution, and security policies
-- [x] Automated CI, release, code quality, and coverage enforcement
-- [ ] Lossless serialization/deserialization (JSON, Markdown, HTML, custom formats)
-- [ ] Universal plugin system for document transforms and schema extensions
-- [ ] Deterministic, reproducible document transforms (for testing, replay, audit)
-- [ ] Pluggable schema validation and migration (versioned docs, forward/backward compat)
-- [ ] Built-in benchmarking, tracing, and performance analytics
-- [ ] Fuzz testing, mutation testing, and property-based tests
-- [ ] Public API stability guarantees and upgrade tooling
-
-### Next Steps (Core)
+### NEXT STEPS (CORE)
 
 - [ ] Implement lossless, extensible serialization (with custom format hooks)
 - [ ] Release universal plugin API for document transforms and schema extensions
