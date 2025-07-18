@@ -1,3 +1,4 @@
+const references: Record<string, { href: string; title?: string }> = {};
 import type { DocumentNode } from '../document';
 
 // --- Helpers ---
@@ -113,17 +114,19 @@ type MarkdownParseContext = {
 
 function parseMarkdown(md: string): DocumentNode {
   const lines = md.split(/\r?\n/);
-  let i = 0;
+  // Removed unused variable 'i'
   let idCounter = 1;
   function nextId(type: string) {
     return `${type}_${idCounter++}`;
   }
-  const references: Record<string, { href: string; title?: string }> = {};
   // Parse reference definitions
   for (let j = 0; j < lines.length; j++) {
-    const refMatch = lines[j]
-      ? lines[j].match(/^\s*\[([^\]]+)\]:\s*(\S+)(?:\s+"([^"]+)\")?/)
-      : null;
+    const refMatch =
+      typeof lines[j] === 'string' && lines[j] !== undefined && lines[j]
+        ? typeof lines[j] === 'string' && lines[j] !== undefined
+          ? lines[j]!.match(/^\s*\[([^\]]+)\]:\s*(\S+)(?:\s+"([^"]+)")?/)
+          : null
+        : null;
     if (refMatch && refMatch[1] && refMatch[2]) {
       references[refMatch[1].toLowerCase()] = {
         href: refMatch[2],
@@ -141,7 +144,7 @@ function parseBlocks(
   ctx: MarkdownParseContext,
   stopOn?: (line: string) => boolean
 ): DocumentNode[] {
-  const { lines, nextId, references } = ctx;
+  const { lines, nextId } = ctx;
   let { i } = ctx;
   const nodes: DocumentNode[] = [];
   while (i < lines.length) {

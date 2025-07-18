@@ -12,7 +12,10 @@ import type { DocumentNode } from './document';
 export interface PluginContext {
   registerTransform: (
     name: string,
-    fn: (doc: DocumentNode, ...args: unknown[]) => DocumentNode
+    fn: (
+      doc: DocumentNode,
+      ...args: unknown[]
+    ) => DocumentNode | Promise<DocumentNode>
   ) => void;
   registerSchemaExtension: (name: string, schema: unknown) => void;
   permissions?: readonly string[];
@@ -34,7 +37,10 @@ export interface TypeenginePlugin {
  */
 const transforms: Record<
   string,
-  (doc: DocumentNode, ...args: unknown[]) => DocumentNode
+  (
+    doc: DocumentNode,
+    ...args: unknown[]
+  ) => DocumentNode | Promise<DocumentNode>
 > = Object.create(null);
 const schemaExtensions: Record<string, unknown> = Object.create(null);
 let loadedPlugins: ReadonlyArray<TypeenginePlugin> = [];
@@ -71,14 +77,15 @@ export function unloadPlugin(name: string): void {
  * @param args - Additional arguments
  * @returns Transformed document node
  */
-export function runTransform(
+export async function runTransform(
   name: string,
   doc: DocumentNode,
   ...args: unknown[]
-): DocumentNode {
+): Promise<DocumentNode> {
   const fn = transforms[name];
   if (typeof fn !== 'function') throw new Error('Transform not found: ' + name);
-  return fn(doc, ...args);
+  const result = fn(doc, ...args);
+  return result instanceof Promise ? await result : result;
 }
 
 /**

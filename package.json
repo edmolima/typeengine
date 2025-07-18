@@ -24,7 +24,8 @@
     "changeset": "changeset",
     "release": "changeset publish",
     "prepublishOnly": "pnpm run build && pnpm test && pnpm lint",
-    "version": "changeset version && pnpm install --no-frozen-lockfile && pnpm lint:fix"
+    "version": "changeset version && pnpm install --no-frozen-lockfile && pnpm lint:fix",
+    "docs:api": "npx typedoc --options typedoc.json"
   },
   "keywords": [
     "rich-text",

@@ -97,7 +97,9 @@ function nodeToHtml(node: DocumentNode, options?: HtmlFormatOptions): string {
   if (node.type === 'text') {
     return escapeHtml(node.text || '');
   }
-  const mapping = nodeToTag[node.type] || { tag: node.type };
+  const mapping = (nodeToTag as Record<string, { tag: string }>)[node.type] || {
+    tag: node.type,
+  };
   const tag = mapping.tag;
   // Type guard for mapping.attrs
   const attrs =
