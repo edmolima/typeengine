@@ -173,7 +173,6 @@ describe('markdownSerializer', () => {
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
     expect(parsed.children?.[0]?.children?.length).toBeGreaterThan(1);
-    // Accept align to be 'left', null, or undefined (implementation may set null or undefined)
     expect(['left', null, undefined]).toContain(
       parsed.children?.[0]?.children?.[0]?.children?.[0]?.attrs?.align
     );
@@ -194,7 +193,6 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|----|----|';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 1 or 2 rows (header only, or header + align row if implementation includes it)
     expect([1, 2]).toContain(parsed.children?.[0]?.children?.length);
   });
 
@@ -223,7 +221,6 @@ describe('markdownSerializer', () => {
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
     expect(parsed.children?.[0]?.children?.length).toBeGreaterThan(1);
-    // Align should be null or undefined for both header cells
     expect([null, undefined]).toContain(
       parsed.children?.[0]?.children?.[0]?.children?.[0]?.attrs?.align
     );
@@ -236,7 +233,6 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|:---|---:|';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 1 or 2 rows (header only, or header + align row if implementation includes it)
     expect([1, 2]).toContain(parsed.children?.[0]?.children?.length);
     expect(['left', null, undefined]).toContain(
       parsed.children?.[0]?.children?.[0]?.children?.[0]?.attrs?.align
@@ -263,7 +259,6 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|----|----|\n|    |    |';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 2 or 3 rows (header + body, or header + align + body)
     expect([2, 3]).toContain(parsed.children?.[0]?.children?.length);
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.length).toBe(2);
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.[0]?.type).toBe(
@@ -275,9 +270,7 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|----|----|\n| a  |';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 2 or 3 rows (header + body, or header + align + body)
     expect([2, 3]).toContain(parsed.children?.[0]?.children?.length);
-    // The body row should have at least one cell
     expect(
       parsed.children?.[0]?.children?.at(-1)?.children?.length
     ).toBeGreaterThanOrEqual(1);
@@ -287,9 +280,7 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|----|----|\n| a  | b  | c |';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 2 or 3 rows (header + body, or header + align + body)
     expect([2, 3]).toContain(parsed.children?.[0]?.children?.length);
-    // The body row should have 3 cells
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.length).toBe(3);
   });
 
@@ -365,7 +356,6 @@ describe('markdownSerializer', () => {
     const md = '|----|----|';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Should fallback to a single row (treated as header)
     expect(parsed.children?.[0]?.children?.length).toBe(1);
     expect(parsed.children?.[0]?.children?.[0]?.type).toBe('tableRow');
   });
@@ -374,7 +364,6 @@ describe('markdownSerializer', () => {
     const md = '|:---|:---:|---:|';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Should fallback to a single row (treated as header)
     expect(parsed.children?.[0]?.children?.length).toBe(1);
     expect(parsed.children?.[0]?.children?.[0]?.type).toBe('tableRow');
   });
@@ -383,9 +372,7 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 | h3 |\n|:---|---:|\n| a | b |';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 2 or 3 rows (header + body, or header + align + body)
     expect([2, 3]).toContain(parsed.children?.[0]?.children?.length);
-    // Header row should have 3 cells, body row should have 2 cells
     expect(parsed.children?.[0]?.children?.[0]?.children?.length).toBe(3);
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.length).toBe(2);
   });
@@ -396,7 +383,6 @@ describe('markdownSerializer', () => {
     expect(parsed.children?.[0]?.type).toBe('table');
     expect(parsed.children?.[0]?.children?.length).toBeGreaterThan(1);
     expect(parsed.children?.[0]?.children?.[0]?.children?.length).toBe(2);
-    // Should ignore empty lines before/after table
     expect(parsed.children?.length).toBe(1);
   });
 
@@ -404,9 +390,7 @@ describe('markdownSerializer', () => {
     const md = '| h1 | h2 |\n|----|----|\n\n| a  | b  |';
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('table');
-    // Accept 2 or 3 rows (header + body, or header + align + body)
     expect([2, 3]).toContain(parsed.children?.[0]?.children?.length);
-    // Last row should be the body row
     expect(parsed.children?.[0]?.children?.at(-1)?.children?.length).toBe(2);
   });
 
@@ -415,7 +399,7 @@ describe('markdownSerializer', () => {
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.type).toBe('html');
     expect(parsed.children?.[0]?.text).toMatch(/xss/);
-    // O serializer nunca deve executar, apenas preservar como texto seguro
+
     const serialized = markdownSerializer.serialize(parsed);
     expect(serialized).toContain('<script>alert("xss")</script>');
   });
@@ -425,7 +409,7 @@ describe('markdownSerializer', () => {
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.children?.[0]?.type).toBe('text');
     expect(parsed.children?.[0]?.children?.[0]?.text).toMatch(/malicious/);
-    // O serializer nunca deve executar, apenas preservar como texto seguro
+
     const serialized = markdownSerializer.serialize(parsed);
     expect(serialized).toContain('javascript:alert("xss")');
   });
@@ -435,7 +419,6 @@ describe('markdownSerializer', () => {
     const parsed = markdownSerializer.deserialize(md);
     expect(parsed.children?.[0]?.children?.[0]?.type).toBe('text');
     expect(parsed.children?.[0]?.children?.[0]?.text).toMatch(/xss/);
-    // O serializer nunca deve executar, apenas preservar como texto seguro
     const serialized = markdownSerializer.serialize(parsed);
     expect(serialized).toContain('javascript:alert("xss")');
   });
