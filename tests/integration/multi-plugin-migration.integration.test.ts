@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  registerValidator,
-  validateDocument,
-  registerMigration,
-  migrateDocument,
-} from '../../src/core/validation';
+import { registerMigration, migrateDocument } from '../../src/core/validation';
 import { loadPlugin, runTransform } from '../../src/core/plugin';
 import exampleTransformPlugin from '../../examples/plugins/example-transform-plugin';
 import exampleCustomNodePlugin from '../../examples/plugins/example-custom-node-plugin';
