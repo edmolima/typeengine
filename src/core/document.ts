@@ -33,26 +33,48 @@ export function mapTree(
  * as well as extensibility for rich text editors and future formats.
  */
 export type NodeType =
-  // Block-level elements
-  | 'root' // Document root
-  | 'paragraph' // Paragraph block
-  | 'heading' // Heading block (attrs.level: 1-6)
-  | 'list' // List block (attrs.ordered: boolean)
-  | 'listItem' // List item
-  | 'code' // Code block (attrs.lang: string)
-  | 'blockquote' // Blockquote
-  | 'thematicBreak' // Horizontal rule (---)
-  | 'table' // Table block
-  | 'tableRow' // Table row
-  | 'tableCell' // Table cell (attrs.header: boolean, attrs.align)
+  | 'root'
+  | 'paragraph'
+  | 'heading'
+  | 'list'
+  | 'listItem'
+  | 'code'
+  | 'blockquote'
+  | 'thematicBreak'
+  | 'table'
+  | 'tableRow'
+  | 'tableCell'
+  | 'text'
+  | 'emphasis'
+  | 'strong'
+  | 'inlineCode'
+  | 'link'
+  | 'image'
+  | 'html';
 
-  // Inline elements
-  | 'text' // Plain text
-  | 'emphasis' // *emphasis* (italic)
-  | 'strong' // **strong** (bold)
-  | 'inlineCode' // `inline code`
-  | 'link' // [text](href)
-  | 'image'; // ![alt](src)
+/**
+ * Runtime array of all valid NodeType values for validation and transforms
+ */
+export const NODE_TYPES: NodeType[] = [
+  'root',
+  'paragraph',
+  'heading',
+  'list',
+  'listItem',
+  'code',
+  'blockquote',
+  'thematicBreak',
+  'table',
+  'tableRow',
+  'tableCell',
+  'text',
+  'emphasis',
+  'strong',
+  'inlineCode',
+  'link',
+  'image',
+  'html',
+];
 
 /**
  * NodeAttributes represents a map of custom attributes for a document node.
