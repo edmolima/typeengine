@@ -9,7 +9,7 @@ import {
 import { createRootNode } from '../../src/core/document';
 
 describe('Plugin system', () => {
-  it('registers and runs transforms', () => {
+  it('registers and runs transforms', async () => {
     loadPlugin({
       name: 'test-transform',
       setup: (ctx) => {
@@ -20,7 +20,7 @@ describe('Plugin system', () => {
       },
     });
     const doc = createRootNode([]);
-    const result = runTransform('addParagraph', doc);
+    const result = await runTransform('addParagraph', doc);
     expect(result.children?.[0]?.type).toBe('paragraph');
   });
 
@@ -34,7 +34,10 @@ describe('Plugin system', () => {
         });
       },
     });
-    const ext = getSchemaExtension('customBlock');
+    const ext = getSchemaExtension('customBlock') as {
+      type: string;
+      attrs: { foo: string };
+    };
     expect(ext.type).toBe('custom');
     expect(ext.attrs.foo).toBe('bar');
   });
@@ -46,8 +49,10 @@ describe('Plugin system', () => {
     expect(getLoadedPlugins().some((p) => p.name === 'dynamic')).toBe(false);
   });
 
-  it('handles missing transforms and schema extensions gracefully', () => {
-    expect(() => runTransform('notfound', createRootNode([]))).toThrow();
+  it('handles missing transforms and schema extensions gracefully', async () => {
+    await expect(
+      runTransform('notfound', createRootNode([]))
+    ).rejects.toThrow();
     expect(getSchemaExtension('notfound')).toBeUndefined();
   });
 
@@ -95,7 +100,7 @@ describe('Plugin system', () => {
     ).toThrow();
   });
 
-  it('does not allow unsafe code execution in plugin transforms', () => {
+  it('does not allow unsafe code execution in plugin transforms', async () => {
     loadPlugin({
       name: 'sandbox',
       setup: (ctx) => {
@@ -104,7 +109,9 @@ describe('Plugin system', () => {
         });
       },
     });
-    expect(() => runTransform('unsafe', createRootNode([]))).toThrow('unsafe');
+    await expect(runTransform('unsafe', createRootNode([]))).rejects.toThrow(
+      'unsafe'
+    );
     unloadPlugin('sandbox');
   });
 });

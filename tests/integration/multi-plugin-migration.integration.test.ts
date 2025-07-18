@@ -13,7 +13,7 @@ import exampleRestructureMigration from '../../examples/migration/example-restru
 import type { DocumentNode } from '../../src/core/document';
 
 describe('Multi-plugin and multi-migration flow', () => {
-  it('applies multiple plugins and migrations in sequence', () => {
+  it('applies multiple plugins and migrations in sequence', async () => {
     loadPlugin(exampleTransformPlugin);
     loadPlugin(exampleCustomNodePlugin);
     registerMigration(exampleMigration);
@@ -34,9 +34,9 @@ describe('Multi-plugin and multi-migration flow', () => {
         },
       ],
     };
-    const transformed = runTransform('uppercaseText', doc);
+    const transformed = await runTransform('uppercaseText', doc);
     expect(transformed.children?.[0].children?.[0].text).toBe('HELLO');
-    const withMeta = runTransform('addMetaParagraph', transformed);
+    const withMeta = await runTransform('addMetaParagraph', transformed);
     expect(withMeta.children?.some((n) => n.attrs?.meta === 'example')).toBe(
       true
     );
