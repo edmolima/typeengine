@@ -6,3 +6,5 @@ export * from './setNodeAttributes';
 export * from './serialize';
 export * from './deserialize';
 export * from './transform';
+export * from './validation';
+export * from './plugin';
