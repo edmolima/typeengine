@@ -1,6 +1,6 @@
 {
   "name": "typeengine",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Typeengine is a blazing-fast, minimal, and extensible rich text core for building the editors of tomorrow.",
   "main": "dist/index.js",
   "module": "dist/index.js",
