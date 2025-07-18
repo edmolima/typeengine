@@ -46,6 +46,8 @@ jobs:
         run: pnpm install
       - name: Run tests with coverage
         run: pnpm test -- --coverage
+      - name: Benchmark performance
+        run: pnpm test tests/performance.test.ts
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
